@@ -1,0 +1,43 @@
+package com.servico.agenda.controller;
+
+import java.util.List;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.servico.agenda.dto.UserDTO;
+import com.servico.agenda.service.UserService;
+
+@RestController
+@RequestMapping("/api/user/v1")
+public class UserControllerV1 {
+    @Autowired
+    private UserService userService;
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDTO> getUsers() {
+        List<UserDTO> usuarios = userService.getAll();
+        return usuarios;
+    }
+
+    @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO findById(@PathVariable Long userId) {
+        return userService.findById(userId);
+    }
+
+    @PostMapping
+    public UserDTO newUser(UserDTO user) {
+        return userService.save(user);
+    }
+
+    @PostMapping(value = "/delete/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO delete(@PathVariable Long userId) {
+        return userService.delete(userId);
+    }
+}

@@ -2,6 +2,8 @@ package com.servico.agenda.model;
 
 import java.util.Set;
 
+import com.servico.agenda.dto.UserDTO;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,6 +28,13 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @jakarta.persistence.JoinColumn(name = "user_id"), inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    public User(UserDTO userDTO) {
+        this.username = userDTO.getUsername();
+        this.email = userDTO.getEmail();
+        this.password = userDTO.getPassword();
+        this.roles = userDTO.getRoles();
+    }
 
     public Long getId() {
         return id;
