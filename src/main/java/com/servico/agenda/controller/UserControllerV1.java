@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +41,10 @@ public class UserControllerV1 {
     @PostMapping(value = "/delete/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO delete(@PathVariable Long userId) {
         return userService.delete(userId);
+    }
+
+    @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO update(@PathVariable Long userId, @RequestBody UserDTO user) {
+        return userService.update(userId, user);
     }
 }

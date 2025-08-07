@@ -44,4 +44,17 @@ public class UserService {
         }
         return null;
     }
+
+    public UserDTO update(Long userId, UserDTO user) {
+        Optional<User> userToUpdate = userRepository.findById(userId);
+        if(userToUpdate.isPresent()) {
+            User userToSave = userToUpdate.get();
+            userToSave.setUsername(user.getUsername());
+            userToSave.setEmail(user.getEmail());
+            userToSave.setPassword(user.getPassword());
+            User savedUser = userRepository.save(userToSave);
+            return new UserDTO(savedUser);
+        }
+        return null;
+    }
 }

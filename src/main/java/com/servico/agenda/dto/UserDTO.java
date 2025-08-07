@@ -20,7 +20,7 @@ public class UserDTO {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
-        //this.password = user.getPassword();
+        this.password = user.getPassword();
         this.roles = user.getRoles().stream().map(role -> {
             RoleDTO roleDTO = new RoleDTO();
             roleDTO.setRoleId(role.getRoleId());
