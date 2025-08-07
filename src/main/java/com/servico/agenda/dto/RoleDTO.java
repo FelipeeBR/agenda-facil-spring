@@ -1,14 +1,7 @@
-package com.servico.agenda.model;
+package com.servico.agenda.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
-@Entity
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RoleDTO {
     private Long roleId;
 
     private String name;

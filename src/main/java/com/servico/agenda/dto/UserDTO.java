@@ -1,8 +1,8 @@
 package com.servico.agenda.dto;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.servico.agenda.model.Role;
 import com.servico.agenda.model.User;
 
 public class UserDTO {
@@ -12,14 +12,21 @@ public class UserDTO {
     private String email;
     private String password;
 
-    private Set<Role> roles;
+    private Set<RoleDTO> roles;
+
+    public UserDTO() {}
 
     public UserDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         //this.password = user.getPassword();
-        this.roles = user.getRoles();
+        this.roles = user.getRoles().stream().map(role -> {
+            RoleDTO roleDTO = new RoleDTO();
+            roleDTO.setRoleId(role.getRoleId());
+            roleDTO.setName(role.getName());
+            return roleDTO;
+        }).collect(Collectors.toSet());;
     }
 
     public Long getId() {
@@ -54,11 +61,11 @@ public class UserDTO {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
+    public Set<RoleDTO> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<RoleDTO> roles) {
         this.roles = roles;
     }
 }

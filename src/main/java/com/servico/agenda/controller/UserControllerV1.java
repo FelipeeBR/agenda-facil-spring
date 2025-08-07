@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +33,7 @@ public class UserControllerV1 {
     }
 
     @PostMapping
-    public UserDTO newUser(UserDTO user) {
+    public UserDTO newUser(@RequestBody UserDTO user) {
         return userService.save(user);
     }
 

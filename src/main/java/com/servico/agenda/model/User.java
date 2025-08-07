@@ -1,16 +1,17 @@
 package com.servico.agenda.model;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.servico.agenda.dto.UserDTO;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -25,15 +26,20 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles", joinColumns = @jakarta.persistence.JoinColumn(name = "user_id"), inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "role_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public User(UserDTO userDTO) {
         this.username = userDTO.getUsername();
         this.email = userDTO.getEmail();
         this.password = userDTO.getPassword();
-        this.roles = userDTO.getRoles();
+        this.roles = userDTO.getRoles().stream().map(dto -> {
+            Role role = new Role();
+            role.setRoleId(dto.getRoleId()); 
+            role.setName(dto.getName());
+            return role;
+        }).collect(Collectors.toSet());
     }
 
     public Long getId() {
