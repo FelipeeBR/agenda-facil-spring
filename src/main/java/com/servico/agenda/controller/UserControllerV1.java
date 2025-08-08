@@ -33,6 +33,14 @@ public class UserControllerV1 {
         return userService.findById(userId);
     }
 
+    public UserDTO findByEmail(String email) {
+        return userService.findByEmail(email);
+    }
+
+    public UserDTO findByUsername(String username) {
+        return userService.findByUsername(username);
+    }
+
     @PostMapping
     public UserDTO newUser(@RequestBody UserDTO user) {
         return userService.save(user);

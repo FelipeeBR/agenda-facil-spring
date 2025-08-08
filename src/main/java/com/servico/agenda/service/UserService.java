@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.servico.agenda.dto.UserDTO;
+import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.User;
 import com.servico.agenda.repository.UserRepository;
 
 @Service
+@Transactional
 public class UserService {
     @Autowired
     private UserRepository userRepository;
@@ -30,6 +33,15 @@ public class UserService {
     }
 
     public UserDTO save(UserDTO user) {
+        if(user.getUsername().isBlank() || user.getEmail().isBlank() || user.getPassword().isBlank()) {
+            throw new UnsupportedValueException("Os campos username, email e password são obrigatórios.");
+        }
+        if(findByEmail(user.getEmail()) != null) {
+            throw new UnsupportedValueException("Email já cadastrado.");
+        }
+        if(findByUsername(user.getUsername()) != null) {
+            throw new UnsupportedValueException("Username já cadastrado.");
+        }
         User userToSave = new User(user);
         User savedUser = userRepository.save(userToSave);
         return new UserDTO(savedUser);
@@ -54,6 +66,22 @@ public class UserService {
             userToSave.setPassword(user.getPassword());
             User savedUser = userRepository.save(userToSave);
             return new UserDTO(savedUser);
+        }
+        return null;
+    }
+
+    public UserDTO findByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user != null) {
+            return new UserDTO(user);
+        }
+        return null;
+    }
+
+    public UserDTO findByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if(user != null) {
+            return new UserDTO(user);
         }
         return null;
     }
