@@ -60,6 +60,16 @@ public class UserService {
     public UserDTO update(Long userId, UserDTO user) {
         Optional<User> userToUpdate = userRepository.findById(userId);
         if(userToUpdate.isPresent()) {
+            if(user.getUsername().isBlank() || user.getEmail().isBlank() || user.getPassword().isBlank()) {
+                throw new UnsupportedValueException("Os campos username, email e password são obrigatórios.");
+            }
+            if(userRepository.existsByUsernameAndIdNot(user.getUsername(), userId)) {
+                throw new UnsupportedValueException("Username já cadastrado.");
+            }
+            if(userRepository.existsByEmailAndIdNot(user.getEmail(), userId)) {
+                throw new UnsupportedValueException("Email já cadastrado.");
+            }
+
             User userToSave = userToUpdate.get();
             userToSave.setUsername(user.getUsername());
             userToSave.setEmail(user.getEmail());
