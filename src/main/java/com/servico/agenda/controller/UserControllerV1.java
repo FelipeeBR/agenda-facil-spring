@@ -34,14 +34,6 @@ public class UserControllerV1 {
         return userService.findById(userId);
     }
 
-    public UserDTO findByEmail(String email) {
-        return userService.findByEmail(email);
-    }
-
-    public UserDTO findByUsername(String username) {
-        return userService.findByUsername(username);
-    }
-
     @PostMapping
     public UserDTO newUser(@RequestBody UserDTO user) {
         return userService.save(user);
@@ -55,5 +47,13 @@ public class UserControllerV1 {
     @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO update(@PathVariable Long userId, @RequestBody UserDTO user) {
         return userService.update(userId, user);
+    }
+
+    public UserDTO findByEmail(String email) {
+        return userService.findByEmail(email);
+    }
+
+    public UserDTO findByUsername(String username) {
+        return userService.findByUsername(username);
     }
 }
