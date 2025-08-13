@@ -1,9 +1,14 @@
 package com.servico.agenda.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.servico.agenda.dto.JobDTO;
+import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.Address;
 import com.servico.agenda.model.Job;
 import com.servico.agenda.model.User;
@@ -35,5 +40,44 @@ public class JobService {
         jobToSave.setAddress(address);
         Job savedJob = jobRepository.save(jobToSave);
         return new JobDTO(savedJob);
+    }
+
+    public List<JobDTO> getAll() {
+        List<Job> jobs = jobRepository.findAll();
+        if(jobs.isEmpty()) {
+            throw new UnsupportedValueException("Nenhum trabalho/servico cadastrado.");
+        }
+        return jobs.stream().map(JobDTO::new).collect(Collectors.toList());
+    }
+
+    public List<JobDTO> findByUserId(Long userId) {
+        List<Job> jobs = jobRepository.findByUserId(userId);
+        if(jobs.isEmpty()) {
+            throw new UnsupportedValueException("Nenhum trabalho/servico cadastrado.");
+        }
+        return jobs.stream().map(JobDTO::new).collect(Collectors.toList());
+    }
+
+    public JobDTO update(Long id, JobDTO job) {
+        Optional<Job> jobToUpdate = jobRepository.findById(id);
+        if(jobToUpdate.isEmpty()) {
+            throw new UnsupportedValueException("Trabalho/Servico nao encontrado.");
+        }
+        Job jobToSave = jobToUpdate.get();
+        jobToSave.setTitle(job.getTitle());
+        jobToSave.setDescription(job.getDescription());
+        Job savedJob = jobRepository.save(jobToSave);
+        return new JobDTO(savedJob);
+    }
+
+    public JobDTO delete(Long id) {
+        Optional<Job> job = jobRepository.findById(id);
+        if(job.isPresent()) {
+            Job jobToDelete = job.get();
+            jobRepository.delete(jobToDelete);
+            return new JobDTO(jobToDelete);
+        } else {
+            throw new UnsupportedValueException("Trabalho/Servico nao encontrado.");
+        }
     }
 }
