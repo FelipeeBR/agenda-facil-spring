@@ -3,7 +3,8 @@ package com.servico.agenda.enums;
 public enum AppointmentStatus {
     PENDING("Pendente"),
     CONFIRMED("Confirmado"),
-    CANCELLED("Cancelado");
+    CANCELLED("Cancelado"),
+    AVALIABLE("Disponivel");
     
     private final String description;
     

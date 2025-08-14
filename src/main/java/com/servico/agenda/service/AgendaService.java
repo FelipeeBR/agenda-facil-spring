@@ -1,6 +1,7 @@
 package com.servico.agenda.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,35 @@ public class AgendaService {
             throw new UnsupportedValueException("Nenhuma agenda cadastrada.");
         }
         return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
+    }
+
+    public List<AgendaDTO> getAgendasByUserId(Long userId) {
+        List<Agenda> agendas = agendaRepository.findByUserId(userId);
+        if(agendas.isEmpty()) {
+            throw new UnsupportedValueException("Nenhuma agenda cadastrada.");
+        }
+        return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
+    }
+
+    public AgendaDTO update(Long id, AgendaDTO agenda) {
+        Optional<Agenda> agendaToUpdate = agendaRepository.findById(id);
+        if(agendaToUpdate.isEmpty()) {
+            throw new UnsupportedValueException("Agenda nao encontrada.");
+        }
+        Agenda agendaToSave = agendaToUpdate.get();
+        agendaToSave.setDateTime(agenda.getDateTime());
+        agendaToSave.setStatus(agenda.getStatus());
+        Agenda savedAgenda = agendaRepository.save(agendaToSave);
+        return new AgendaDTO(savedAgenda);
+    }
+
+    public AgendaDTO delete(Long id) {
+        Optional<Agenda> agenda = agendaRepository.findById(id);
+        if(agenda.isEmpty()) {
+            throw new UnsupportedValueException("Agenda nao encontrada.");
+        }
+        Agenda agendaToDelete = agenda.get();
+        agendaRepository.delete(agendaToDelete);
+        return new AgendaDTO(agendaToDelete);
     }
 }
