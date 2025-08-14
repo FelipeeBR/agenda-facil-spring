@@ -8,10 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servico.agenda.controller.UserControllerV1;
 import com.servico.agenda.dto.UserDTO;
 import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.User;
 import com.servico.agenda.repository.UserRepository;
+
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 @Service
 @Transactional
@@ -21,15 +26,28 @@ public class UserService {
 
     public List<UserDTO> getAll() {
         List<User> usuarios = userRepository.findAll();
+        if(usuarios.isEmpty()) {
+            throw new UnsupportedValueException("Nenhum usuário cadastrado.");
+        }
+
+        CollectionModel<UserDTO> collectionModel = CollectionModel.of(usuarios.stream().map(UserDTO::new).collect(Collectors.toList()));
+
+        collectionModel.add(WebMvcLinkBuilder.linkTo(UserControllerV1.class).withRel("users"));
         return usuarios.stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     public UserDTO findById(Long userId) {
         Optional<User> usuario = userRepository.findById(userId);
-        if(usuario.isPresent()) {
-            return new UserDTO(usuario.get());
+        if(!usuario.isPresent()) {
+            throw new UnsupportedValueException("Usuário nao encontrado.");
         }
-        return null;
+
+
+        EntityModel<UserDTO> entityModel = EntityModel.of(new UserDTO(usuario.get()));
+
+        entityModel.add(WebMvcLinkBuilder.linkTo(UserControllerV1.class).slash(userId).withSelfRel());
+
+        return new UserDTO(usuario.get());
     }
 
     public UserDTO save(UserDTO user) {
@@ -42,6 +60,7 @@ public class UserService {
         if(findByUsername(user.getUsername()) != null) {
             throw new UnsupportedValueException("Username já cadastrado.");
         }
+
         User userToSave = new User(user);
         User savedUser = userRepository.save(userToSave);
         return new UserDTO(savedUser);
@@ -52,7 +71,11 @@ public class UserService {
         if(user.isPresent()) {
             User userToDelete = user.get();
             userRepository.delete(userToDelete);
-            return new UserDTO(userToDelete);
+
+            UserDTO deletedUserDTO = new UserDTO(userToDelete);
+            deletedUserDTO.add(WebMvcLinkBuilder.linkTo(UserControllerV1.class).slash(userId).withSelfRel());
+
+            return deletedUserDTO;
         }
         return null;
     }

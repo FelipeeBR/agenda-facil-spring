@@ -3,9 +3,13 @@ package com.servico.agenda.dto;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.servico.agenda.controller.UserControllerV1;
 import com.servico.agenda.model.User;
 
-public class UserDTO {
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+
+public class UserDTO extends RepresentationModel<UserDTO> {
     private Long id;
 
     private String username;
@@ -26,7 +30,9 @@ public class UserDTO {
             roleDTO.setRoleId(role.getRoleId());
             roleDTO.setName(role.getName());
             return roleDTO;
-        }).collect(Collectors.toSet());;
+        }).collect(Collectors.toSet());
+
+        add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserControllerV1.class).findById(id)).withSelfRel());
     }
 
     public Long getId() {
