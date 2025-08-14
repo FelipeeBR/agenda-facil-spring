@@ -5,9 +5,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servico.agenda.controller.AddressControllerV1;
 import com.servico.agenda.dto.AddressDTO;
 import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.Address;
@@ -42,6 +46,11 @@ public class AddressService {
         if(addresses.isEmpty()) {
             throw new UnsupportedValueException("Nenhum endereço cadastrado.");
         }
+
+        CollectionModel<AddressDTO> collectionModel = CollectionModel.of(addresses.stream().map(AddressDTO::new).collect(Collectors.toList()));
+
+        collectionModel.add(WebMvcLinkBuilder.linkTo(AddressControllerV1.class).withRel("addresses"));
+
         return addresses.stream().map(AddressDTO::new).collect(Collectors.toList());
     }
 
@@ -50,6 +59,11 @@ public class AddressService {
         if(address.isEmpty()) {
             throw new UnsupportedValueException("Nenhum endereço cadastrado.");
         }
+
+        EntityModel<AddressDTO> entityModel = EntityModel.of(new AddressDTO(address.get(0)));
+
+        entityModel.add(WebMvcLinkBuilder.linkTo(AddressControllerV1.class).slash(userId).withSelfRel());
+
         return address.stream().map(AddressDTO::new).collect(Collectors.toList());
     }
 

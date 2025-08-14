@@ -5,8 +5,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
+import com.servico.agenda.controller.AgendaControllerV1;
 import com.servico.agenda.dto.AgendaDTO;
 import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.Agenda;
@@ -47,6 +50,9 @@ public class AgendaService {
         if(agendas.isEmpty()) {
             throw new UnsupportedValueException("Nenhuma agenda cadastrada.");
         }
+
+        EntityModel<AgendaDTO> entityModel = EntityModel.of(new AgendaDTO(agendas.get(0)));
+        entityModel.add(WebMvcLinkBuilder.linkTo(AgendaControllerV1.class).slash(jobId).withSelfRel());
         return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
     }
 
@@ -55,6 +61,9 @@ public class AgendaService {
         if(agendas.isEmpty()) {
             throw new UnsupportedValueException("Nenhuma agenda cadastrada.");
         }
+
+        EntityModel<AgendaDTO> entityModel = EntityModel.of(new AgendaDTO(agendas.get(0)));
+        entityModel.add(WebMvcLinkBuilder.linkTo(AgendaControllerV1.class).slash(userId).withSelfRel());
         return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
     }
 

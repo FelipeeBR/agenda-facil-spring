@@ -2,10 +2,14 @@ package com.servico.agenda.dto;
 
 import java.util.Date;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+
+import com.servico.agenda.controller.AgendaControllerV1;
 import com.servico.agenda.enums.AppointmentStatus;
 import com.servico.agenda.model.Agenda;
 
-public class AgendaDTO {
+public class AgendaDTO extends RepresentationModel<AgendaDTO> {
     private Long id;
     private Date dateTime;
     private Long userId;
@@ -29,6 +33,8 @@ public class AgendaDTO {
         this.userId = agenda.getUser().getId();
         this.jobId = agenda.getJob().getId();
         this.status = agenda.getStatus();
+
+        add(WebMvcLinkBuilder.linkTo(AgendaControllerV1.class).slash(id).withSelfRel());
     }
 
     public Long getId() {

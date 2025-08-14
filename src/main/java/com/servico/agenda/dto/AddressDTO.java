@@ -1,8 +1,12 @@
 package com.servico.agenda.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+
+import com.servico.agenda.controller.AddressControllerV1;
 import com.servico.agenda.model.Address;
 
-public class AddressDTO {
+public class AddressDTO extends RepresentationModel<AddressDTO> {
  
     private Long id;
     private String street;
@@ -20,6 +24,8 @@ public class AddressDTO {
        this.state = address.getState();
        this.city = address.getCity();
        this.userId = address.getUser().getId();
+
+        add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AddressControllerV1.class).findByUserId(id)).withSelfRel());
     }
 
     public Long getId() {

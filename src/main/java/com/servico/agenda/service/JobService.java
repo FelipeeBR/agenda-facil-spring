@@ -5,8 +5,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
+import com.servico.agenda.controller.JobControllerV1;
 import com.servico.agenda.dto.JobDTO;
 import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.Address;
@@ -47,6 +51,11 @@ public class JobService {
         if(jobs.isEmpty()) {
             throw new UnsupportedValueException("Nenhum trabalho/servico cadastrado.");
         }
+
+        CollectionModel<JobDTO> collectionModel = CollectionModel.of(jobs.stream().map(JobDTO::new).collect(Collectors.toList()));
+
+        collectionModel.add(WebMvcLinkBuilder.linkTo(JobControllerV1.class).withRel("jobs"));
+
         return jobs.stream().map(JobDTO::new).collect(Collectors.toList());
     }
 
@@ -55,6 +64,10 @@ public class JobService {
         if(jobs.isEmpty()) {
             throw new UnsupportedValueException("Nenhum trabalho/servico cadastrado.");
         }
+
+        EntityModel<JobDTO> entityModel = EntityModel.of(new JobDTO(jobs.get(0)));
+
+        entityModel.add(WebMvcLinkBuilder.linkTo(JobControllerV1.class).slash(userId).withSelfRel());
         return jobs.stream().map(JobDTO::new).collect(Collectors.toList());
     }
 

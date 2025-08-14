@@ -1,8 +1,12 @@
 package com.servico.agenda.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+
+import com.servico.agenda.controller.JobControllerV1;
 import com.servico.agenda.model.Job;
 
-public class JobDTO {
+public class JobDTO extends RepresentationModel<JobDTO> {
     private Long id;
 
     private String title;
@@ -18,6 +22,12 @@ public class JobDTO {
         this.description = job.getDescription();
         this.userId = job.getUser().getId();
         this.addressId = job.getAddress().getId();
+
+        add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+            .methodOn(JobControllerV1.class)
+            .findByUserId(id))
+            .withSelfRel()
+        );
     }
 
     public Long getId() {
