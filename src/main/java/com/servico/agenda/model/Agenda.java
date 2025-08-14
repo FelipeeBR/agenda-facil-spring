@@ -32,6 +32,8 @@ public class Agenda {
 	@JoinColumn(name = "job_id")
     private Job job;
 
+    //@Enumerated(EnumType.STRING)
+    @JoinColumn(name = "status")
     private AppointmentStatus status;
 
     public Agenda() {}

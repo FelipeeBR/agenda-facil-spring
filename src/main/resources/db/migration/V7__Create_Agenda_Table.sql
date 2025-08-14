@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS agendas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date_time DATETIME NOT NULL,
-    status VARCHAR(255) NOT NULL,
+    status INT NOT NULL,
     user_id INT NOT NULL,
     job_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

@@ -1,9 +1,13 @@
 package com.servico.agenda.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.servico.agenda.dto.AgendaDTO;
+import com.servico.agenda.exceptions.UnsupportedValueException;
 import com.servico.agenda.model.Agenda;
 import com.servico.agenda.model.Job;
 import com.servico.agenda.model.User;
@@ -35,5 +39,13 @@ public class AgendaService {
         agendaToSave.setJob(job);
         Agenda savedAgenda = agendaRepository.save(agendaToSave);
         return new AgendaDTO(savedAgenda);
+    }
+
+    public List<AgendaDTO> getAgendasByJobId(Long jobId) {
+        List<Agenda> agendas = agendaRepository.findByJobId(jobId);
+        if(agendas.isEmpty()) {
+            throw new UnsupportedValueException("Nenhuma agenda cadastrada.");
+        }
+        return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
     }
 }
