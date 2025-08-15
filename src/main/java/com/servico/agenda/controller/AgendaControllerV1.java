@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,6 +36,18 @@ public class AgendaControllerV1 {
     @GetMapping(value = "/user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AgendaDTO> getAgendasByUserId(@PathVariable("userId") Long userId) {
         return agendaService.getAgendasByUserId(userId);
+    }
+
+    @GetMapping(value = "/client/{clientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AgendaDTO> getAgendasByClientId(@PathVariable("clientId") Long clientId) {
+        return agendaService.getAgendasByClientId(clientId);
+    }
+
+    @PatchMapping(value = "/{agendaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AgendaDTO updateClient(
+            @PathVariable Long agendaId,
+            @RequestBody AgendaDTO request) {
+        return agendaService.updateClient(agendaId, request.getUserId());
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

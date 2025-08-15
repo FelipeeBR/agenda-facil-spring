@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS agendas (
     status INT NOT NULL,
     user_id INT NOT NULL,
     job_id INT NOT NULL,
+    client_id INT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (job_id) REFERENCES job(id) ON DELETE CASCADE
 )

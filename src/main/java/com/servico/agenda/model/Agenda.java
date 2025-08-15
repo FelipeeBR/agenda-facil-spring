@@ -32,17 +32,20 @@ public class Agenda {
 	@JoinColumn(name = "job_id")
     private Job job;
 
-    //@Enumerated(EnumType.STRING)
     @JoinColumn(name = "status")
     private AppointmentStatus status;
 
+    @JoinColumn(name = "client_id", nullable = true)
+    private Long clientId;
+
     public Agenda() {}
 
-    public Agenda(Date dateTime, User user, Job job, AppointmentStatus status) {
+    public Agenda(Date dateTime, User user, Job job, AppointmentStatus status, Long clientId) {
         this.dateTime = dateTime;
         this.user = user;
         this.job = job;
         this.status = status;
+        this.clientId = clientId;
     }
 
     public Agenda(AgendaDTO agenda) {
@@ -89,6 +92,14 @@ public class Agenda {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 
 }

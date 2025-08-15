@@ -67,6 +67,17 @@ public class AgendaService {
         return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
     }
 
+    public List<AgendaDTO> getAgendasByClientId(Long clientId) {
+        List<Agenda> agendas = agendaRepository.findByClientId(clientId);
+        if(agendas.isEmpty()) {
+            throw new UnsupportedValueException("Nenhuma agenda cadastrada.");
+        }
+
+        EntityModel<AgendaDTO> entityModel = EntityModel.of(new AgendaDTO(agendas.get(0)));
+        entityModel.add(WebMvcLinkBuilder.linkTo(AgendaControllerV1.class).slash(clientId).withSelfRel());
+        return agendas.stream().map(AgendaDTO::new).collect(Collectors.toList());
+    }
+
     public AgendaDTO update(Long id, AgendaDTO agenda) {
         Optional<Agenda> agendaToUpdate = agendaRepository.findById(id);
         if(agendaToUpdate.isEmpty()) {
@@ -75,6 +86,17 @@ public class AgendaService {
         Agenda agendaToSave = agendaToUpdate.get();
         agendaToSave.setDateTime(agenda.getDateTime());
         agendaToSave.setStatus(agenda.getStatus());
+        Agenda savedAgenda = agendaRepository.save(agendaToSave);
+        return new AgendaDTO(savedAgenda);
+    }
+
+    public AgendaDTO updateClient(Long id, Long clientId) {
+        Optional<Agenda> agendaToUpdate = agendaRepository.findById(id);
+        if(agendaToUpdate.isEmpty()) {
+            throw new UnsupportedValueException("Agenda nao encontrada.");
+        }
+        Agenda agendaToSave = agendaToUpdate.get();
+        agendaToSave.setClientId(clientId);
         Agenda savedAgenda = agendaRepository.save(agendaToSave);
         return new AgendaDTO(savedAgenda);
     }

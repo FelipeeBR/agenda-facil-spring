@@ -16,15 +16,17 @@ public class AgendaDTO extends RepresentationModel<AgendaDTO> {
     private Long jobId;
 
     private AppointmentStatus status;
+    private Long clientId;
 
     public AgendaDTO() {}
 
-    public AgendaDTO(Long id, Date dateTime, Long userId, Long jobId, AppointmentStatus status) {
+    public AgendaDTO(Long id, Date dateTime, Long userId, Long jobId, AppointmentStatus status, Long clientId) {
         this.id = id;
         this.dateTime = dateTime;
         this.userId = userId;
         this.jobId = jobId;
         this.status = status;
+        this.clientId = clientId;
     }
 
     public AgendaDTO(Agenda agenda) {
@@ -75,5 +77,13 @@ public class AgendaDTO extends RepresentationModel<AgendaDTO> {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 }

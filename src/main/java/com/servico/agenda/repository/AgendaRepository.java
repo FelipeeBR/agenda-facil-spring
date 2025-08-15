@@ -10,4 +10,6 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
     List<Agenda> findByUserId(Long userId);
 
     List<Agenda> findByJobId(Long jobId);
+
+    List<Agenda> findByClientId(Long clientId);
 }
