@@ -34,7 +34,7 @@ public class UserControllerV1 {
         return userService.findById(userId);
     }
 
-    @PostMapping
+    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO newUser(@RequestBody UserDTO user) {
         return userService.save(user);
     }

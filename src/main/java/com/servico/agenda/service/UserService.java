@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +18,23 @@ import com.servico.agenda.repository.UserRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
+    
+    private PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public List<UserDTO> getAll() {
         List<User> usuarios = userRepository.findAll();
@@ -60,6 +72,8 @@ public class UserService {
         if(findByUsername(user.getUsername()) != null) {
             throw new UnsupportedValueException("Username já cadastrado.");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User userToSave = new User(user);
         User savedUser = userRepository.save(userToSave);
@@ -117,5 +131,14 @@ public class UserService {
             return new UserDTO(user);
         }
         return null;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var user =  userRepository.findByUsername(username);
+        if(user == null) {
+            throw new UsernameNotFoundException("Usuário não encontrado.");
+        }
+        return user;
     }
 }
