@@ -30,6 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getServletPath();
+        if (path.equals("/api/auth/login") || path.equals("/api/user/v1/create")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
@@ -42,11 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-
-        if(request.getServletPath().equals("/api/auth/login")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        filterChain.doFilter(request, response);
     }
-
 }
