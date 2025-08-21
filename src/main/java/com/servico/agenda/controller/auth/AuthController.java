@@ -28,14 +28,23 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginRequest loginRequest) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                loginRequest.username(), loginRequest.password()
+            )
+        );
 
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        String jwt = authenticationService.authenticate(authentication);
 
-        String token = authenticationService.authenticate(authentication);
+        TokenDTO tokenDTO = new TokenDTO();
+        tokenDTO.setAccessToken(jwt);
+        tokenDTO.setRefreshToken(jwt);
+        tokenDTO.setUsername(authentication.getName());
+        tokenDTO.setAuthenticated(authentication.isAuthenticated());
+        //tokenDTO.setCreated(Instant.now());
+        //tokenDTO.setExpiration(Instant.now().plusSeconds(3600));
 
-        return ResponseEntity.ok(new TokenDTO(token, null, null, null, token, token));
+        return ResponseEntity.ok(tokenDTO);
     }
 
     public record LoginRequest(String username, String password) {}
