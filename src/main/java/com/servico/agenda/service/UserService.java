@@ -18,14 +18,11 @@ import com.servico.agenda.repository.UserRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 @Transactional
-public class UserService implements UserDetailsService {
+public class UserService {
     @Autowired
     private UserRepository userRepository;
     
@@ -126,19 +123,19 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO findByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if(user != null) {
-            return new UserDTO(user);
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isPresent()) {
+            return new UserDTO(user.get());
         }
         return null;
     }
 
-    @Override
+    /*@Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user =  userRepository.findByUsername(username);
-        if(user == null) {
+        Optional<User> user =  userRepository.findByUsername(username);
+        if(!user.isPresent()) {
             throw new UsernameNotFoundException("Usuário não encontrado.");
         }
-        return user;
-    }
+        return user.get();
+    }*/
 }
