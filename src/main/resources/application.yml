@@ -25,3 +25,6 @@ jwt:
     key: classpath:app-pkcs8.key
   public:
     key: classpath:app-x509.pub
+
+cors:
+  originPatterns: http://localhost:4200,http://localhost:3000
