@@ -10,6 +10,7 @@
 - Jpa
 - Flyway
 - RabbitMQ
+- OAuth2.0
 
 ### 📎Testes
 - Mockito
