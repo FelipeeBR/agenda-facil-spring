@@ -36,6 +36,12 @@ public class AgendaService {
     @Autowired
     private JavaMailSender javaMailSender;
 
+    private EmailProducer emailProducer;
+
+    public AgendaService(EmailProducer emailProducer) {
+        this.emailProducer = emailProducer;
+    }
+
     public AgendaDTO save(AgendaDTO agenda) {
         User user = userRepository.findById(agenda.getUserId())
         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -114,10 +120,12 @@ public class AgendaService {
         .orElseThrow(() -> new RuntimeException("Trabalho/Servico nao encontrado"));
 
         // Profissional
-        enviarEmailAgenda(user.getEmail(), "Agendamento", "O Cliente " + client.getUsername() + " agendou para o serviço: " + job.getTitle());
+        //enviarEmailAgenda(user.getEmail(), "Agendamento", "O Cliente " + client.getUsername() + " agendou para o serviço: " + job.getTitle());
+        emailProducer.sendEmail(user.getEmail(), "Agendamento", "O Cliente " + client.getUsername() + " agendou para o serviço: " + job.getTitle());
         
         // Cliente
-        enviarEmailAgenda(client.getEmail(), "Agendamento", "Voce fez o Agendamento para o servico: " + job.getTitle());
+        //enviarEmailAgenda(client.getEmail(), "Agendamento", "Voce fez o Agendamento para o servico: " + job.getTitle());
+        emailProducer.sendEmail(client.getEmail(), "Agendamento", "Você fez o Agendamento para o serviço: " + job.getTitle());
 
         Agenda agendaToSave = agendaToUpdate.get();
         agendaToSave.setClientId(clientId);
