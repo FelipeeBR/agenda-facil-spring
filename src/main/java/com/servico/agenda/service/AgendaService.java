@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.servico.agenda.controller.AgendaControllerV1;
@@ -31,12 +33,18 @@ public class AgendaService {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     public AgendaDTO save(AgendaDTO agenda) {
         User user = userRepository.findById(agenda.getUserId())
         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Job job = jobRepository.findById(agenda.getJobId())
         .orElseThrow(() -> new RuntimeException("Trabalho/Servico nao encontrado"));
+
+
+        enviarEmailAgenda(user.getEmail(), "Agendamento", "Agendamento para o trabalho/servico: " + job.getTitle());
 
         Agenda agendaToSave = new Agenda(agenda);
         agendaToSave.setUser(user);
@@ -95,6 +103,22 @@ public class AgendaService {
         if(agendaToUpdate.isEmpty()) {
             throw new UnsupportedValueException("Agenda nao encontrada.");
         }
+
+        User user = userRepository.findById(agendaToUpdate.get().getUser().getId())
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        User client = userRepository.findById(clientId)
+        .orElseThrow(() -> new RuntimeException("Usuário nao encontrado"));
+
+        Job job = jobRepository.findById(agendaToUpdate.get().getJob().getId())
+        .orElseThrow(() -> new RuntimeException("Trabalho/Servico nao encontrado"));
+
+        // Profissional
+        enviarEmailAgenda(user.getEmail(), "Agendamento", "O Cliente " + client.getUsername() + " agendou para o serviço: " + job.getTitle());
+        
+        // Cliente
+        enviarEmailAgenda(client.getEmail(), "Agendamento", "Voce fez o Agendamento para o servico: " + job.getTitle());
+
         Agenda agendaToSave = agendaToUpdate.get();
         agendaToSave.setClientId(clientId);
         Agenda savedAgenda = agendaRepository.save(agendaToSave);
@@ -109,5 +133,19 @@ public class AgendaService {
         Agenda agendaToDelete = agenda.get();
         agendaRepository.delete(agendaToDelete);
         return new AgendaDTO(agendaToDelete);
+    }
+
+
+    public String enviarEmailAgenda(String email, String assunto, String mensagem) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject(assunto);
+            message.setText(mensagem);
+            javaMailSender.send(message);
+            return "Email enviado com sucesso";
+        } catch (Exception e) {
+            return "Erro ao enviar email: " + e.getMessage();
+        }
     }
 }

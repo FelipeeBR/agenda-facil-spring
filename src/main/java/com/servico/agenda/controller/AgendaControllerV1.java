@@ -44,10 +44,8 @@ public class AgendaControllerV1 {
     }
 
     @PatchMapping(value = "/{agendaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AgendaDTO updateClient(
-            @PathVariable Long agendaId,
-            @RequestBody AgendaDTO request) {
-        return agendaService.updateClient(agendaId, request.getUserId());
+    public AgendaDTO updateClient(@PathVariable Long agendaId, @RequestBody AgendaDTO agenda) {
+        return agendaService.updateClient(agendaId, agenda.getClientId());
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
