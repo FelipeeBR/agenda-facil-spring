@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -46,8 +49,8 @@ public class JobService {
         return new JobDTO(savedJob);
     }
 
-    public List<JobDTO> getAll() {
-        List<Job> jobs = jobRepository.findAll();
+    public Page<JobDTO> getAll(Pageable pageable) {
+        Page<Job> jobs = jobRepository.findAll(pageable);
         if(jobs.isEmpty()) {
             throw new UnsupportedValueException("Nenhum trabalho/servico cadastrado.");
         }
@@ -56,7 +59,7 @@ public class JobService {
 
         collectionModel.add(WebMvcLinkBuilder.linkTo(JobControllerV1.class).withRel("jobs"));
 
-        return jobs.stream().map(JobDTO::new).collect(Collectors.toList());
+        return new PageImpl<>(jobs.stream().map(JobDTO::new).collect(Collectors.toList()), pageable, jobs.getTotalElements());
     }
 
     public List<JobDTO> findByUserId(Long userId) {
