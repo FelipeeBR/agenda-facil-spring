@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.servico.agenda.dto.RoleDTO;
 import com.servico.agenda.dto.UserDTO;
@@ -34,6 +35,9 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
@@ -58,6 +62,7 @@ public class UserServiceTest {
         savedUser.setUsername(userDTO.getUsername());
         savedUser.setEmail(userDTO.getEmail());
         savedUser.setPassword(userDTO.getPassword());
+        when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
 
         Set<Role> roleEntities = new HashSet<>();
         Role role = new Role();
