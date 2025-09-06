@@ -11,6 +11,7 @@
 - Flyway
 - RabbitMQ
 - OAuth2.0
+- HATEOAS
 
 ### 📎Testes
 - Mockito
