@@ -31,6 +31,7 @@ services:
   servico-agenda:
     container_name: servico-agenda
     build: .
+    image: felipe390/servico-agenda:latest
     ports:
       - "8080:8080"
     environment:
